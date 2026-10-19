@@ -338,6 +338,7 @@
   .equipment-hero h1 { font-size: clamp(36px,7vw,50px); max-width: 20ch; margin-block: 24px; }
   .equipment-hero__content { padding: 0; }
   .equipment-hero__content > .home-button { width: 100%; }
+  .equipment-hero__actions { flex-direction: column; align-items: stretch; }
   .equipment-hero__media { min-height: 0; aspect-ratio: 1.1; border-radius: 18px; }
   .equipment-promises__wrapper { padding-bottom: 50px; }
   .equipment-promises ul { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0 20px; }
@@ -360,7 +361,7 @@
   .equipment-documents__foot, .equipment-service__foot { flex-direction: column; align-items: stretch; gap: 24px; }
   .equipment-documents__foot .home-button { font-size: 11px; }
   .equipment-feature { min-height: 480px; border-radius: 18px; }
-  .equipment-feature::after { background: linear-gradient(0deg,#0b1112f2 0%,#0b1112a8 62%,#0b111240 100%); }
+  .equipment-feature::after { background: linear-gradient(0deg,#101010f2 0%,#101010a8 62%,#10101040 100%); }
   .equipment-feature__content { padding: 28px; }
   .equipment-feature h3 { font-size: 34px; }
   .equipment-feature p { font-size: 17px; }
@@ -380,6 +381,8 @@
   .equipment-benefits__list h3 { font-size: 27px; }
   .equipment-benefits__list p { font-size: 17px; }
   .equipment-tabs { margin-bottom: 25px; }
+  .equipment-preview-slider:not(._enhanced) > .swiper-wrapper { grid-template-columns: 1fr; }
+  .equipment-preview__body { padding: 20px; }
   .equipment-tabs__item { max-width: 220px; }
   .equipment-tabs__tab { min-height: 60px; padding: 14px 17px; font-size: 10px; }
   .equipment-product { grid-template-columns: 1fr; gap: 25px; }
@@ -654,4 +657,108 @@
 @media (prefers-reduced-motion: reduce) {
   .contacts-page *, .contacts-page *::before, .contacts-page *::after { transition-duration: .01ms !important; }
   .contacts-page .home-header { transition: none; }
+}
+
+/* ==================== КАРТОЧКА ОБОРУДОВАНИЯ: АДАПТИВ ==================== */
+@media (max-width: 1199.98px) {
+  .product-related-card > a { grid-template-columns: 1fr; }
+  .product-related-card__image { height: 240px; }
+  .product-industry { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 1023.98px) {
+  .product-hero__grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+  .product-key-specs { gap: 0 16px; }
+  .product-key-specs dd { font-size: 23px; }
+  .product-offer__heading { flex-direction: column; gap: 6px; }
+  .product-section__layout { grid-template-columns: 1fr 1.6fr; gap: 32px; }
+}
+@media (max-width: 767.98px) {
+  .product-hero { padding-block: 104px 32px; }
+  .product-heading { margin-block: 16px 24px; }
+  .product-heading h1 { margin-top: 10px; }
+  .product-heading__type { display: none; }
+  .product-heading .home-tag { font-size: 10px; }
+  .product-hero__grid { grid-template-columns: 1fr; gap: 32px; }
+  .product-gallery-main__slide img { aspect-ratio: 1.25; }
+  .product-gallery-thumbs__slide { width: 78px; }
+  .product-gallery-thumbs__slide img { height: 54px; }
+  .product-summary__intro h2 { font-size: 28px; }
+  .product-summary__intro h2 br { display: none; }
+  .product-summary__intro p { font-size: 16px; }
+  .product-key-specs { margin-block: 24px; }
+  .product-key-specs dd { font-size: 24px; }
+  .product-key-specs dt { font-size: 12px; }
+  .product-offer__heading { flex-direction: row; flex-wrap: wrap; }
+  .product-sections { gap: 0 22px; padding-block: 8px; }
+  .product-sections a { font-size: 14px; }
+  .product-section { padding-block: 44px; }
+  .product-section__layout { grid-template-columns: 1fr; gap: 28px; }
+  .product-section__heading h2 { font-size: 28px; max-width: none; margin-top: 12px; }
+  .product-section__heading p { max-width: 50ch; margin-top: 14px; }
+  .product-page .product-lead { font-size: 20px; }
+  .product-spec-table { font-size: 15px; }
+  .product-spec-table caption { font-size: 21px; }
+  .product-spec-table th { width: 60%; padding-right: 18px; }
+  .product-config dl > div { grid-template-columns: 1fr; gap: 10px; }
+  .product-config dt { font-size: 20px; }
+  .product-support { grid-template-columns: 1fr; gap: 8px; }
+  .product-document { gap: 14px; }
+  .product-document__format { flex-basis: 40px; height: 46px; }
+  .product-document h3 { font-size: 20px; }
+  .product-related__heading { align-items: start; flex-direction: column; gap: 8px; }
+  .product-related__grid { grid-template-columns: 1fr; gap: 20px; }
+  .product-related-card__image { height: 230px; }
+  .product-related-card__body { padding: 22px; }
+  .product-related-card dl { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .product-related-card h3 { margin-bottom: 12px; }
+  .product-industry { grid-template-columns: 1fr; gap: 10px; }
+  .product-industry h3 { margin-bottom: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .product-page *, .product-page *::before, .product-page *::after { transition-duration: .01ms !important; }
+}
+
+/* ==================== ПРОТОТИП: АДАПТИВ ==================== */
+@media (max-width: 1023.98px) {
+  .prototype .home-header { padding-block: 12px; }
+  .prototype .home-header__pill { display: none; }
+  .prototype .home-hero__wrapper { padding-top: 108px; }
+  .prototype .home-intro__background { top: 108px; left: 56%; height: 390px; }
+  .prototype .home-intro__caption { flex-direction: column; gap: 4px; }
+  .prototype .home-process__wrapper { grid-template-columns: 1fr; gap: 28px; }
+  .prototype .home-process__list { grid-template-columns: 1fr 1fr; }
+  .prototype :is(.home-section-head, .equipment-head, .home-products__intro) { grid-template-columns: 1fr; gap: 18px; }
+}
+@media (max-width: 767.98px) {
+  .homepage.prototype { --container-padding: 20px; }
+  .prototype main h1 { font-size: clamp(30px, 8vw, 40px); }
+  .prototype :is(.home-heading, .home-process__intro .home-heading, .equipment-head h2, .projects-list .home-heading, .project-gallery .home-heading, .blog-materials__head .home-heading, .contacts-requisites .home-heading) { font-size: 28px; }
+  .prototype .home-intro__background { display: block; position: relative; top: auto; left: auto; right: auto; height: 190px; margin: 92px var(--container-padding) 0; }
+  .prototype .home-intro__caption { flex-direction: row; gap: 12px; padding: 10px 12px; font-size: 8px; }
+  .prototype .home-hero__wrapper { padding-top: 28px; }
+  .prototype .home-hero__eyebrow { max-width: none; margin-bottom: 16px; font-size: 9px; }
+  .prototype .home-hero__title, .prototype .home-hero__bottom { max-width: none; }
+  .prototype .home-hero__bottom { margin-top: 20px; gap: 22px; }
+  .prototype .home-hero__actions { width: 100%; }
+  .prototype .home-hero__proofs { grid-template-columns: 1fr; margin-top: 28px; gap: 10px; }
+  .prototype .home-hero__proofs li { padding: 18px 42px 18px 56px; }
+  .prototype .home-hero__proofs li > span { top: 20px; right: 14px; }
+  .prototype .home-proof-icon { left: 18px; top: 20px; width: 22px; height: 22px; }
+  .prototype .home-hero__proofs li br { display: none; }
+  .prototype .home-statements__phrases { grid-template-columns: 1fr; gap: 20px; }
+  .prototype .home-statements__phrase { font-size: 17px; }
+  .prototype .home-flow__texts, .prototype .home-process__list { grid-template-columns: 1fr; }
+  .prototype .home-flow__item { padding: 20px; }
+  .prototype .home-flow__mobile { height: 190px; margin-bottom: 20px; }
+  .prototype :is(.home-products, .home-process, .home-projects, .home-journal, .home-contact, .blog-materials, .article-related, .contacts-direct, .contacts-requisites, .contacts-inquiry) { padding-block: 44px; }
+  .prototype :is(.home-about__wrapper, .about-approach__wrapper, .about-trust__wrapper, .about-career__wrapper, .projects-list__wrapper, .project-outcome__wrapper) { padding-block: 44px; }
+  .prototype :is(.about-hero__wrapper, .equipment-hero__wrapper, .projects-hero__wrapper, .project-hero__wrapper, .blog-hero__wrapper, .article-hero__wrapper) { padding-block: 104px 40px; }
+  .prototype .contacts-hero { padding-block: 104px 40px; }
+  .prototype :is(.home-about__media, .about-hero__media, .equipment-hero__media, .projects-hero__media, .project-hero__media, .blog-hero__media, .contacts-hero__media, .about-service__media) { min-height: 260px; width: 100%; aspect-ratio: auto; }
+  .prototype .project-preview__media { min-height: 260px; }
+  .prototype .home-inquiry, .prototype .home-contact__request { padding: 24px 20px; }
+  .prototype .article-cover > img { height: 220px; }
+  .prototype .home-footer__contact { font-size: 24px; }
+  .prototype .home-menu { padding-top: 96px; }
+  .prototype .home-menu__nav a, .prototype .home-menu__nav .equipment-menu-trigger { font-size: 26px; }
 }

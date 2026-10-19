@@ -1,16 +1,16 @@
 /* Extracted from index.html + css/main.css. Optional export for new pages.
    Does not override the existing --home-* or generic --color-* variables. */
 :root {
-  --irbis-ink: #222f30;
-  --irbis-bone: #f7f7f5;
-  --irbis-tissue: #e7e8e1;
-  --irbis-accent: #2fd1e8;
-  --irbis-line: #c9cbbe;
-  --irbis-muted: #4d5757;
-  --irbis-footer: #0b1112;
-  --irbis-text-on-dark: #c9d2cf;
-  --irbis-outline: #a7bab866;
-  --irbis-navigation: #f7f7f5f2;
+  --irbis-ink: #2c2c2c;
+  --irbis-bone: #f7f7f7;
+  --irbis-tissue: #e7e7e7;
+  --irbis-accent: #b0b0b0;
+  --irbis-line: #cacaca;
+  --irbis-muted: #555555;
+  --irbis-footer: #101010;
+  --irbis-text-on-dark: #d0d0d0;
+  --irbis-outline: #b6b6b666;
+  --irbis-navigation: #f7f7f7f2;
   --irbis-font: 'Inter Tight', Arial, sans-serif;
   --irbis-mono: 'Roboto Mono', Consolas, monospace;
   --irbis-weight: 400;

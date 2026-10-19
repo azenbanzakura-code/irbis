@@ -141,11 +141,11 @@
   panel.hidden = true;
   panel.setAttribute('aria-label', 'Каталог оборудования по отраслям');
   panel.innerHTML = `
-    <div class="equipment-menu__head"><h2>Оборудование<span class="home-dot">.</span></h2><a class="home-button" href="catalog.html">Всё оборудование<span class="home-button__arrow" aria-hidden="true">↗</span></a></div>
+    <div class="equipment-menu__head"><h2>Оборудование<span class="home-dot">.</span></h2><a class="home-button" href="catalog.html#top">Всё оборудование<span class="home-button__arrow" aria-hidden="true">↗</span></a></div>
     <div class="equipment-menu__tabs" role="tablist" aria-label="Отрасль предприятия">${industries.map((item, i) => `<button type="button" role="tab" id="equipment-menu-tab-${item.id}" aria-controls="equipment-menu-panel-${item.id}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">${item.label}</button>`).join('')}</div>
     ${industries.map((item, i) => `<div class="equipment-menu__panel" id="equipment-menu-panel-${item.id}" role="tabpanel" aria-labelledby="equipment-menu-tab-${item.id}"${i ? ' hidden' : ''}>
-      <div class="equipment-menu__visual"><img src="img/main/products/p${item.photo}.jpg" alt="" width="1100" height="1100" loading="lazy"><span>${item.title}</span></div>
-      <div class="equipment-menu__listing"><div class="equipment-menu__caption"><span>Техника и оборудование</span><span>05 групп</span></div><ul>${item.products.map((product, index) => `<li><a href="${item.page}#equipment-panel-${index}"><span class="equipment-menu__number">0${index + 1}</span><span>${product}</span><span class="equipment-menu__arrow" aria-hidden="true">↗</span></a></li>`).join('')}<li><a class="equipment-menu__direction" href="${item.page}"><span>Все решения для отрасли</span><span class="equipment-menu__arrow" aria-hidden="true">↗</span></a></li></ul></div>
+      <div class="equipment-menu__visual"><img src="${document.body.classList.contains('prototype') ? 'img/main/prototype-placeholder.svg' : `img/main/products/p${item.photo}.jpg`}" alt="" width="1100" height="1100" loading="lazy"><span>${item.title}</span></div>
+      <div class="equipment-menu__listing"><div class="equipment-menu__caption"><span>Техника и оборудование</span><span>05 групп</span></div><ul>${item.products.map((product, index) => `<li><a href="${item.page}#${index === 0 ? 'top' : `equipment-panel-${index}`}"><span class="equipment-menu__number">0${index + 1}</span><span>${product}</span><span class="equipment-menu__arrow" aria-hidden="true">↗</span></a></li>`).join('')}<li><a class="equipment-menu__direction" href="${item.page}"><span>Все решения для отрасли</span><span class="equipment-menu__arrow" aria-hidden="true">↗</span></a></li></ul></div>
     </div>`).join('')}
     <div class="equipment-menu__footer"><span>Для эксплуатации и обслуживания</span><a href="catalog-detail-parts.html">Запасные части<span aria-hidden="true">↗</span></a><a href="catalog-detail-service.html">Сервисные услуги<span aria-hidden="true">↗</span></a></div>`;
   const desktop = window.matchMedia('(min-width: 1024px)');
@@ -190,7 +190,7 @@
       panel.querySelector('#' + tab.getAttribute('aria-controls')).hidden = i !== index;
     });
   }
-  const currentIndustry = industries.findIndex(item => item.page === location.pathname.split('/').pop());
+  const currentIndustry = industries.findIndex(item => item.id === document.body.dataset.industry || item.page === location.pathname.split('/').pop());
   if (currentIndustry >= 0) selectTab(currentIndustry);
   tabs.forEach((tab, index) => {
     tab.addEventListener('click', () => selectTab(index));
@@ -274,6 +274,7 @@
   const intro = document.querySelector('.home-intro');
   const video = document.querySelector('.home-intro__video');
   const statements = document.querySelector('.home-statements');
+  if (page?.classList.contains('prototype')) return;
   if (!page || !intro || !header || !video || !statements) return;
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
   const phrases = [...document.querySelectorAll('.home-statements__phrase')];
@@ -318,9 +319,58 @@
   reduce.addEventListener('change',configure);
   configure();
 })();
+
+/* ==================== КАРТОЧКА ОБОРУДОВАНИЯ: ГАЛЕРЕЯ ==================== */
+(function () {
+  const gallery = document.querySelector('.product-gallery');
+  if (!gallery) return;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const buttons = [...gallery.querySelectorAll('.product-gallery-thumbs__slide button')];
+  const root = gallery.querySelector('.product-gallery-main');
+  if (typeof Swiper !== 'undefined') {
+    gallery.classList.add('_enhanced');
+    const thumbs = new Swiper(gallery.querySelector('.product-gallery-thumbs'), {
+      slidesPerView: 'auto', spaceBetween: 10, watchSlidesProgress: true,
+      speed: reduce.matches ? 0 : 1000, a11y: { enabled: false }
+    });
+    const slider = new Swiper(root, {
+      slidesPerView: 1, spaceBetween: 16, speed: reduce.matches ? 0 : 1000,
+      thumbs: { swiper: thumbs },
+      navigation: { prevEl: '.product-gallery-nav__prev', nextEl: '.product-gallery-nav__next' },
+      pagination: { el: '.product-gallery__pagination', type: 'fraction', formatFractionCurrent: n => String(n).padStart(2, '0'), formatFractionTotal: n => String(n).padStart(2, '0') },
+      a11y: { prevSlideMessage: 'Предыдущее фото', nextSlideMessage: 'Следующее фото', slideLabelMessage: 'Фото {{index}} из {{slidesLength}}', containerRoleDescriptionMessage: 'Галерея оборудования' },
+      on: { init: sync, slideChange: sync }
+    });
+    function sync(swiper) {
+      buttons.forEach((button, i) => button.setAttribute('aria-pressed', String(i === swiper.activeIndex)));
+      swiper.slides.forEach((slide, i) => { slide.inert = i !== swiper.activeIndex; });
+    }
+    buttons.forEach((button, i) => {
+      button.addEventListener('click', () => slider.slideTo(i));
+      button.addEventListener('keydown', event => {
+        let next;
+        if (event.key === 'ArrowRight') next = (i + 1) % buttons.length;
+        else if (event.key === 'ArrowLeft') next = (i + buttons.length - 1) % buttons.length;
+        else if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = buttons.length - 1;
+        else return;
+        event.preventDefault();
+        slider.slideTo(next);
+        thumbs.slideTo(next);
+        buttons[next].focus({ preventScroll: true });
+      });
+    });
+    reduce.addEventListener('change', () => { slider.params.speed = thumbs.params.speed = reduce.matches ? 0 : 1000; });
+  }
+  if (typeof Fancybox !== 'undefined') Fancybox.bind('[data-fancybox="product-gallery"]', {
+    mainClass: 'product-gallery-lightbox', animated: !reduce.matches, dragToClose: false,
+    l10n: { CLOSE: 'Закрыть', NEXT: 'Следующее фото', PREV: 'Предыдущее фото', MODAL: 'Галерея оборудования', ERROR: 'Не удалось загрузить фото', IMAGE_ERROR: 'Не удалось загрузить фото' }
+  });
+})();
 /* ==================== ПРОДУКЦИЯ: ВИДЕО ПРИ ПРОКРУТКЕ ==================== */
 (function () {
   const flow = document.querySelector('.home-flow');
+  if (document.body.classList.contains('prototype')) return;
   if (!flow) return;
   const desktop = window.matchMedia('(min-width: 1024px)');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -376,6 +426,7 @@
 (function () {
   const hero = document.querySelector('.home-hero');
   const reticle = document.querySelector('.home-reticle');
+  if (document.body.classList.contains('prototype')) return;
   if (!hero || !reticle || window.matchMedia('(pointer: coarse), (prefers-reduced-motion: reduce)').matches) return;
   const [vertical,horizontal] = reticle.querySelectorAll('span');
   const dot = reticle.querySelector('i');
@@ -556,6 +607,7 @@
     });
     const products = new Swiper(productsRoot, {
       initialSlide: initial, slidesPerView: 1, spaceBetween: 35,
+      allowTouchMove: !productsRoot.querySelector('.equipment-preview-slider'),
       speed: reduce.matches ? 0 : 1000, autoHeight: true,
       thumbs: { swiper: thumbs },
       navigation: { prevEl: '.equipment-products-nav__prev', nextEl: '.equipment-products-nav__next' },
@@ -597,6 +649,45 @@
       thumbs.slideTo(index);
     });
     sliders.push(thumbs, products);
+    panels.forEach(panel => {
+      const root = panel.querySelector('.equipment-preview-slider');
+      if (!root) return;
+      const controls = panel.querySelector('.equipment-preview-controls');
+      root.classList.add('_enhanced');
+      const preview = new Swiper(root, {
+        nested: true, slidesPerView: 1.08, spaceBetween: 16,
+        speed: reduce.matches ? 0 : 600, watchOverflow: true,
+        breakpoints: { 768: { slidesPerView: 2.1, spaceBetween: 20 }, 1200: { slidesPerView: 3, spaceBetween: 24 } },
+        navigation: { prevEl: controls.querySelector('.nav__prev'), nextEl: controls.querySelector('.nav__next') },
+        pagination: { el: controls.querySelector('.equipment-controls__count'), type: 'fraction', formatFractionCurrent: n => String(n).padStart(2, '0'), formatFractionTotal: n => String(n).padStart(2, '0') },
+        a11y: { scrollOnFocus: false, prevSlideMessage: 'Предыдущее оборудование', nextSlideMessage: 'Следующее оборудование', slideLabelMessage: '{{index}} из {{slidesLength}}' },
+        on: { init: syncPreviews, slideChange: syncPreviews, resize: syncPreviews }
+      });
+      root.addEventListener('keydown', event => {
+        if (event.altKey || event.ctrlKey || event.metaKey || !event.target.closest('.equipment-preview')) return;
+        const index = preview.slides.indexOf(event.target.closest('.swiper-slide'));
+        let next;
+        if (event.key === 'ArrowRight') next = Math.min(index + 1, preview.slides.length - 1);
+        else if (event.key === 'ArrowLeft') next = Math.max(index - 1, 0);
+        else if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = preview.slides.length - 1;
+        else return;
+        event.preventDefault();
+        preview.slideTo(next);
+        preview.slides[next].inert = false;
+        preview.slides[next].querySelector('a').focus({ preventScroll: true });
+      });
+      root.addEventListener('focusin', event => {
+        const index = preview.slides.indexOf(event.target.closest('.swiper-slide'));
+        if (index >= preview.activeIndex + Math.floor(Number(preview.params.slidesPerView))) preview.slideTo(index);
+      });
+      sliders.push(preview);
+    });
+    products.updateAutoHeight(0);
+  }
+  function syncPreviews(swiper) {
+    const count = Math.ceil(Number(swiper.params.slidesPerView));
+    swiper.slides.forEach((slide, i) => { slide.inert = i < swiper.activeIndex || i >= swiper.activeIndex + count; });
   }
   function syncFocus(swiper) {
     swiper.slides.forEach((slide, i) => { slide.inert = i !== swiper.activeIndex; });
@@ -620,7 +711,7 @@
   copy.inert = true;
   track.appendChild(copy);
   function configure() {
-    const moving = !reduce.matches;
+    const moving = !reduce.matches && !document.body.classList.contains('prototype');
     brands.classList.toggle('_running', moving);
     copy.hidden = !moving;
     toggle.hidden = !moving;
