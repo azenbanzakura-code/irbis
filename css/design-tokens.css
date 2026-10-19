@@ -1,0 +1,42 @@
+/* Extracted from index.html + css/main.css. Optional export for new pages.
+   Does not override the existing --home-* or generic --color-* variables. */
+:root {
+  --irbis-ink: #222f30;
+  --irbis-bone: #f7f7f5;
+  --irbis-tissue: #e7e8e1;
+  --irbis-accent: #2fd1e8;
+  --irbis-line: #c9cbbe;
+  --irbis-muted: #4d5757;
+  --irbis-footer: #0b1112;
+  --irbis-text-on-dark: #c9d2cf;
+  --irbis-outline: #a7bab866;
+  --irbis-navigation: #f7f7f5f2;
+  --irbis-font: 'Inter Tight', Arial, sans-serif;
+  --irbis-mono: 'Roboto Mono', Consolas, monospace;
+  --irbis-weight: 400;
+  --irbis-display: clamp(42px, 6.8vw, 106px);
+  --irbis-headline: clamp(34px, 5.2vw, 80px);
+  --irbis-title: clamp(30px, 3.6vw, 60px);
+  --irbis-body: 18px;
+  --irbis-label: 13px;
+  --irbis-radius-arrow: 6px;
+  --irbis-radius-control: 8px;
+  --irbis-radius-navigation: 12px;
+  --irbis-radius-card: 18px;
+  --irbis-radius-section: 40px;
+  --irbis-radius-section-mobile: 26px;
+  --irbis-space-xs: 8px;
+  --irbis-space-sm: 10px;
+  --irbis-space-md: 20px;
+  --irbis-space-lg: 28px;
+  --irbis-space-xl: 32px;
+  --irbis-space-grid: 50px;
+  --irbis-space-section: 120px;
+  --irbis-container: 1560px;
+  --irbis-gutter: clamp(20px, 4.2vw, 60px);
+  --irbis-ease: cubic-bezier(.22, 1, .36, 1);
+  --irbis-duration-hover: 300ms;
+  --irbis-duration-menu: 350ms;
+  --irbis-duration-phrase: 500ms;
+  --irbis-duration-video: 700ms;
+}
