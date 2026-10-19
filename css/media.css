@@ -1,5 +1,31 @@
 /* Только медиазапросы; первый брейкпоинт равен ширине контейнера. */
 
+/* ==================== МЕГА-МЕНЮ ==================== */
+@media (max-width: 1439.98px) {
+  .home-header__nav .equipment-menu-trigger { padding-inline: 9px; font-size: 11px; }
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .equipment-menu:not([hidden]) { animation: equipment-menu-enter .22s var(--home-ease) both; }
+  @keyframes equipment-menu-enter { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+}
+@media (max-width: 1023.98px) {
+  .home-header._is-open::before { content: ''; position: fixed; inset: 0 0 auto; height: 86px; background: var(--home-bone); pointer-events: none; }
+  .home-menu .equipment-menu { flex-shrink: 0; margin: 0; padding: 16px 0 20px; max-height: none; overflow: visible; border: 0; border-bottom: 1px solid var(--home-line); border-radius: 0; }
+  .home-menu .equipment-menu__head { margin-bottom: 18px; }
+  .home-menu .equipment-menu__head h2 { display: none; }
+  .home-menu .equipment-menu__head .home-button { width: 100%; padding: 8px 10px 8px 18px; border: 0; font-size: 11px; }
+  .home-menu .equipment-menu__tabs { gap: 8px; padding-bottom: 18px; }
+  .home-menu .equipment-menu__tabs button { flex: 1 1 calc(50% - 8px); padding-inline: 10px; font-size: 11px; }
+  .home-menu .equipment-menu__panel { grid-template-columns: 1fr; gap: 0; padding-block: 20px 10px; }
+  .home-menu .equipment-menu__visual { display: none; }
+  .home-menu .equipment-menu__listing ul { grid-template-columns: 1fr; }
+  .home-menu .equipment-menu__listing a { min-height: 52px; padding-block: 13px; border-bottom: 0; font-size: 18px; }
+  .home-menu .equipment-menu__listing .equipment-menu__direction { font-size: 11px; }
+  .home-menu .equipment-menu__footer { gap: 12px 24px; padding-bottom: 0; }
+  .home-menu .equipment-menu__footer > span { width: 100%; }
+  .home-menu .equipment-menu__footer a { padding: 0; border: 0; font-size: 11px; }
+}
+
 /* ==================== CONTAINER ==================== */
 @media (max-width: 1644px) {
   /* TODO: адаптив под ширину контейнера. */

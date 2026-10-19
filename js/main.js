@@ -118,6 +118,115 @@
 })();
 
 // TODO: логика страниц на Vanilla JS в отдельных IIFE.
+/* ==================== МЕГА-МЕНЮ ОБОРУДОВАНИЯ ==================== */
+(function () {
+  const header = document.querySelector('.home-header');
+  const mobileMenu = header?.querySelector('.home-menu');
+  const links = header?.querySelectorAll('.home-header__nav a[href="catalog.html"], .home-menu__nav a[href="catalog.html"]');
+  if (!links?.length || !mobileMenu) return;
+  // Группы и прямые ссылки соответствуют вкладкам детальных страниц каталога.
+  const industries = [
+    { id: 'mining', label: 'Горная добыча', title: 'Рудники и горнодобывающие предприятия', page: 'catalog-detail.html', photo: 4,
+      products: ['Карьерная техника', 'Погрузочное оборудование', 'Дробильно-сортировочные комплексы', 'Конвейерные системы', 'Сервисная техника'] },
+    { id: 'mines', label: 'Шахты', title: 'Оборудование для подземных работ', page: 'catalog-detail-mines.html', photo: 1,
+      products: ['Проходческая техника', 'Подземные погрузчики', 'Шахтный транспорт', 'Транспортные системы', 'Сервисное оснащение'] },
+    { id: 'ports', label: 'Порты и терминалы', title: 'Техника для портов и терминалов', page: 'catalog-detail-ports.html', photo: 2,
+      products: ['Перегрузочная техника', 'Контейнерная техника', 'Складская техника', 'Конвейерные системы', 'Сервисное оснащение'] },
+    { id: 'energy', label: 'ТЭЦ и ГРЭС', title: 'Оборудование для энергетических объектов', page: 'catalog-detail-energy.html', photo: 3,
+      products: ['Силовые агрегаты', 'Насосное оборудование', 'Топливоподача', 'Электрооборудование', 'Ремонтное оснащение'] }
+  ];
+  const panel = document.createElement('section');
+  panel.className = 'equipment-menu';
+  panel.id = 'equipment-menu';
+  panel.hidden = true;
+  panel.setAttribute('aria-label', 'Каталог оборудования по отраслям');
+  panel.innerHTML = `
+    <div class="equipment-menu__head"><h2>Оборудование<span class="home-dot">.</span></h2><a class="home-button" href="catalog.html">Всё оборудование<span class="home-button__arrow" aria-hidden="true">↗</span></a></div>
+    <div class="equipment-menu__tabs" role="tablist" aria-label="Отрасль предприятия">${industries.map((item, i) => `<button type="button" role="tab" id="equipment-menu-tab-${item.id}" aria-controls="equipment-menu-panel-${item.id}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">${item.label}</button>`).join('')}</div>
+    ${industries.map((item, i) => `<div class="equipment-menu__panel" id="equipment-menu-panel-${item.id}" role="tabpanel" aria-labelledby="equipment-menu-tab-${item.id}"${i ? ' hidden' : ''}>
+      <div class="equipment-menu__visual"><img src="img/main/products/p${item.photo}.jpg" alt="" width="1100" height="1100" loading="lazy"><span>${item.title}</span></div>
+      <div class="equipment-menu__listing"><div class="equipment-menu__caption"><span>Техника и оборудование</span><span>05 групп</span></div><ul>${item.products.map((product, index) => `<li><a href="${item.page}#equipment-panel-${index}"><span class="equipment-menu__number">0${index + 1}</span><span>${product}</span><span class="equipment-menu__arrow" aria-hidden="true">↗</span></a></li>`).join('')}<li><a class="equipment-menu__direction" href="${item.page}"><span>Все решения для отрасли</span><span class="equipment-menu__arrow" aria-hidden="true">↗</span></a></li></ul></div>
+    </div>`).join('')}
+    <div class="equipment-menu__footer"><span>Для эксплуатации и обслуживания</span><a href="catalog-detail-parts.html">Запасные части<span aria-hidden="true">↗</span></a><a href="catalog-detail-service.html">Сервисные услуги<span aria-hidden="true">↗</span></a></div>`;
+  const desktop = window.matchMedia('(min-width: 1024px)');
+  const triggers = [...links].map(link => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'equipment-menu-trigger';
+    button.innerHTML = 'Оборудование<span aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="m3 4.5 3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
+    button.setAttribute('aria-expanded', 'false');
+    button.setAttribute('aria-controls', panel.id);
+    if (link.hasAttribute('aria-current')) button.setAttribute('aria-current', link.getAttribute('aria-current'));
+    link.replaceWith(button);
+    return button;
+  });
+  let opener = null;
+  function close(restoreFocus = false) {
+    if (panel.hidden) return;
+    panel.hidden = true;
+    header.classList.remove('_equipment-open');
+    triggers.forEach(button => button.setAttribute('aria-expanded', 'false'));
+    if (restoreFocus) opener?.focus({ preventScroll: true });
+  }
+  function placePanel() {
+    close();
+    if (desktop.matches) header.append(panel);
+    else triggers[1].after(panel);
+  }
+  triggers.forEach(button => button.addEventListener('click', () => {
+    if (!panel.hidden) { close(); return; }
+    opener = button;
+    panel.hidden = false;
+    header.classList.add('_equipment-open');
+    button.setAttribute('aria-expanded', 'true');
+    // В DOM панель расположена после навигации, поэтому сразу ведём к её содержимому.
+    panel.querySelector('.equipment-menu__head a').focus({ preventScroll: true });
+  }));
+  const tabs = [...panel.querySelectorAll('[role="tab"]')];
+  function selectTab(index) {
+    tabs.forEach((tab, i) => {
+      tab.setAttribute('aria-selected', String(i === index));
+      tab.tabIndex = i === index ? 0 : -1;
+      panel.querySelector('#' + tab.getAttribute('aria-controls')).hidden = i !== index;
+    });
+  }
+  const currentIndustry = industries.findIndex(item => item.page === location.pathname.split('/').pop());
+  if (currentIndustry >= 0) selectTab(currentIndustry);
+  tabs.forEach((tab, index) => {
+    tab.addEventListener('click', () => selectTab(index));
+    tab.addEventListener('keydown', event => {
+      let next;
+      if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+      if (event.key === 'ArrowLeft') next = (index + tabs.length - 1) % tabs.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = tabs.length - 1;
+      if (next === undefined) return;
+      event.preventDefault();
+      selectTab(next);
+      tabs[next].focus();
+    });
+  });
+  // Escape закрывает сначала второй уровень, затем мобильное меню.
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !panel.hidden) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      close(true);
+    }
+  }, true);
+  document.addEventListener('pointerdown', event => {
+    if (!panel.hidden && !panel.contains(event.target) && !triggers.some(button => button.contains(event.target))) close();
+  });
+  document.addEventListener('focusin', event => {
+    if (!panel.hidden && !panel.contains(event.target) && !triggers.includes(event.target)) close();
+  });
+  panel.addEventListener('click', event => {
+    if (event.target.closest('a')) close();
+  });
+  header.querySelector('.home-burger')?.addEventListener('click', () => close());
+  desktop.addEventListener('change', placePanel);
+  placePanel();
+})();
 /* ==================== БУРГЕР ==================== */
 (function () {
   const header = document.querySelector('.home-header');
@@ -137,7 +246,7 @@
     if (burger.getAttribute('aria-expanded') !== 'true') return;
     if (event.key === 'Escape') { setOpen(false); burger.focus(); }
     if (event.key === 'Tab') {
-      const focusable = [burger, ...menu.querySelectorAll('a')];
+      const focusable = [burger, ...menu.querySelectorAll('a, button:not([tabindex="-1"])')].filter(element => element.getClientRects().length);
       const index = focusable.indexOf(document.activeElement);
       if (event.shiftKey && index === 0) { event.preventDefault(); focusable.at(-1).focus(); }
       else if (!event.shiftKey && index === focusable.length - 1) { event.preventDefault(); burger.focus(); }
@@ -289,6 +398,20 @@
   const form = popup.querySelector('.home-form');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
   let opener;
+  popup.addEventListener('keydown', event => {
+    if (event.key !== 'Tab') return;
+    const controls = [...popup.querySelectorAll('button, a[href], input:not([type="hidden"]), textarea')]
+      .filter(el => !el.disabled && el.tabIndex >= 0 && el.getClientRects().length);
+    if (!controls.length) return;
+    const first = controls[0], last = controls.at(-1);
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
   // Контекст обновляется до того, как Fancybox перенесёт inline-форму в диалог.
   document.addEventListener('click', event => {
     const trigger = event.target.closest('[data-request]');
@@ -322,7 +445,7 @@
         });
       },
       destroy: () => {
-        if (opener?.closest('.home-menu')) document.querySelector('.home-burger')?.focus({ preventScroll: true });
+        if (opener?.closest('.home-menu')) requestAnimationFrame(() => document.querySelector('.home-burger')?.focus({ preventScroll: true }));
       }
     }
   });
@@ -466,6 +589,12 @@
         thumbs.slideTo(next);
         tabs[next].focus({ preventScroll: true });
       });
+    });
+    window.addEventListener('hashchange', () => {
+      const index = panels.findIndex(panel => '#' + panel.id === location.hash);
+      if (index < 0) return;
+      products.slideTo(index);
+      thumbs.slideTo(index);
     });
     sliders.push(thumbs, products);
   }
